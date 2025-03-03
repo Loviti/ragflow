@@ -3216,6 +3216,32 @@
             "tags": "LLM,TEXT EMBEDDING,TTS,SPEECH2TEXT,TEXT RE-RANK",
             "status": "1",
             "llm": []
+        },
+        {
+            "name": "Azure-Document-Intelligence",
+            "logo": "",
+            "tags": "OCR,DOCUMENT PARSING,LAYOUT ANALYSIS",
+            "status": "1",
+            "llm": [
+                {
+                    "llm_name": "prebuilt-document",
+                    "tags": "OCR,DOCUMENT PARSING,LAYOUT ANALYSIS",
+                    "max_tokens": 0,
+                    "model_type": "image2text"
+                },
+                {
+                    "llm_name": "prebuilt-layout",
+                    "tags": "LAYOUT ANALYSIS",
+                    "max_tokens": 0,
+                    "model_type": "image2text"
+                },
+                {
+                    "llm_name": "prebuilt-read",
+                    "tags": "OCR",
+                    "max_tokens": 0,
+                    "model_type": "image2text"
+                }
+            ]
         }
     ]
 }

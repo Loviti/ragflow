@@ -490,7 +490,7 @@ def queue_raptor_o_graphrag_tasks(doc, ty, msg):
 
 
 def doc_upload_and_parse(conversation_id, file_objs, user_id):
-    from rag.app import presentation, picture, naive, audio, email
+    from rag.app import presentation, picture, naive, audio, email, azure_doc
     from api.db.services.dialog_service import DialogService
     from api.db.services.file_service import FileService
     from api.db.services.llm_service import LLMBundle
@@ -524,7 +524,8 @@ def doc_upload_and_parse(conversation_id, file_objs, user_id):
         ParserType.PRESENTATION.value: presentation,
         ParserType.PICTURE.value: picture,
         ParserType.AUDIO.value: audio,
-        ParserType.EMAIL.value: email
+        ParserType.EMAIL.value: email,
+        ParserType.AZURE_DOC.value: azure_doc
     }
     parser_config = {"chunk_token_num": 4096, "delimiter": "\n!?;。；！？", "layout_recognize": "Plain Text"}
     exe = ThreadPoolExecutor(max_workers=12)

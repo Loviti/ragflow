@@ -57,6 +57,7 @@ const hidePagesChunkMethods = [
   DocumentParserType.Resume,
   DocumentParserType.One,
   DocumentParserType.KnowledgeGraph,
+  DocumentParserType.AzureDoc,
 ];
 
 const ChunkMethodModal: React.FC<IProps> = ({

@@ -25,6 +25,10 @@ import base64
 from io import BytesIO
 import json
 import requests
+import logging
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
 
 from rag.nlp import is_english
 from api.utils import get_uuid
@@ -745,3 +749,89 @@ class HunyuanCV(Base):
                 ],
             }
         ]
+
+class AzureDocumentIntelligence(Base):
+    """Azure Document Intelligence API integration for document OCR and parsing.
+    
+    This class provides an interface to Azure's Document Intelligence API for OCR
+    and document understanding capabilities as an alternative to DeepDoc.
+    """
+    def __init__(self, key, endpoint, model_name='prebuilt-document'):
+        """Initialize the Azure Document Intelligence client.
+        
+        Args:
+            key (str): Azure API key
+            endpoint (str): Azure endpoint URL
+            model_name (str): Model name to use (default: prebuilt-document)
+        """
+        self.key = key
+        self.endpoint = endpoint
+        self.model_name = model_name
+        self.client = DocumentIntelligenceClient(
+            endpoint=endpoint, 
+            credential=AzureKeyCredential(key)
+        )
+        
+    def describe(self, image, max_tokens=300):
+        """Extract text and document information from an image or PDF.
+        
+        Args:
+            image (bytes): Binary image or PDF document data
+            max_tokens (int): Not used for Azure Document Intelligence
+            
+        Returns:
+            tuple: (str, int) containing the extracted text and token count
+        """
+        try:
+            # Create a poller to track the processing operation
+            poller = self.client.begin_analyze_document(
+                model_id=self.model_name,
+                analyze_request=AnalyzeDocumentRequest(
+                    base64_source=base64.b64encode(image).decode('utf-8')
+                )
+            )
+            
+            # Wait for the operation to complete
+            result = poller.result()
+            
+            # Extract the text content from the result
+            extracted_text = ""
+            
+            # Handle layout extraction for document models
+            if hasattr(result, 'pages'):
+                # Extract text from each page maintaining layout
+                for page in result.pages:
+                    for line in page.lines:
+                        extracted_text += f"{line.content}\n"
+            
+            # Handle table extraction
+            if hasattr(result, 'tables'):
+                extracted_text += "\n\nTables:\n"
+                for i, table in enumerate(result.tables):
+                    extracted_text += f"\nTable {i+1}:\n"
+                    header_cells = {}
+                    
+                    # Try to identify header cells (first row)
+                    for cell in table.cells:
+                        if cell.row_index == 0:
+                            header_cells[cell.column_index] = cell.content
+                    
+                    # Reconstruct the table
+                    current_row = -1
+                    for cell in sorted(table.cells, key=lambda c: (c.row_index, c.column_index)):
+                        if cell.row_index > current_row:
+                            extracted_text += "\n"
+                            current_row = cell.row_index
+                        
+                        # Add the cell content
+                        if cell.content:
+                            extracted_text += f"{cell.content} | "
+            
+            # Approximate token count (rough estimation)
+            token_count = len(extracted_text.split()) * 1.3
+            
+            return extracted_text, int(token_count)
+        
+        except Exception as e:
+            logging.error(f"Azure Document Intelligence error: {e}")
+            return f"Error processing document: {str(e)}", 0

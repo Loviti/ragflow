@@ -18,6 +18,7 @@ const ParserListMap = new Map([
       DocumentParserType.One,
       DocumentParserType.Qa,
       DocumentParserType.KnowledgeGraph,
+      DocumentParserType.AzureDoc,
     ],
   ],
   [
@@ -31,6 +32,7 @@ const ParserListMap = new Map([
       DocumentParserType.Qa,
       DocumentParserType.Manual,
       DocumentParserType.KnowledgeGraph,
+      DocumentParserType.AzureDoc,
     ],
   ],
   [
@@ -46,7 +48,7 @@ const ParserListMap = new Map([
   [['ppt', 'pptx'], [DocumentParserType.Presentation]],
   [
     ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tif', 'tiff', 'webp', 'svg', 'ico'],
-    [DocumentParserType.Picture],
+    [DocumentParserType.Picture, DocumentParserType.AzureDoc],
   ],
   [
     ['txt'],

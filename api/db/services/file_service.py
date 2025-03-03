@@ -390,7 +390,7 @@ class FileService(CommonService):
 
     @staticmethod
     def parse_docs(file_objs, user_id):
-        from rag.app import presentation, picture, naive, audio, email
+        from rag.app import presentation, picture, naive, audio, email, azure_doc
 
         def dummy(prog=None, msg=""):
             pass
@@ -399,7 +399,8 @@ class FileService(CommonService):
             ParserType.PRESENTATION.value: presentation,
             ParserType.PICTURE.value: picture,
             ParserType.AUDIO.value: audio,
-            ParserType.EMAIL.value: email
+            ParserType.EMAIL.value: email,
+            ParserType.AZURE_DOC.value: azure_doc
         }
         parser_config = {"chunk_token_num": 16096, "delimiter": "\n!?;。；！？", "layout_recognize": "Plain Text"}
         exe = ThreadPoolExecutor(max_workers=12)
@@ -433,4 +434,6 @@ class FileService(CommonService):
             return ParserType.PRESENTATION.value
         if re.search(r"\.(eml)$", filename):
             return ParserType.EMAIL.value
+        if default == ParserType.AZURE_DOC.value:
+            return ParserType.AZURE_DOC.value
         return default

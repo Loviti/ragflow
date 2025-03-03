@@ -106,6 +106,7 @@ from .cv_model import (
     TogetherAICV,
     YiCV,
     HunyuanCV,
+    AzureDocumentIntelligence,
 )
 from .rerank_model import (
     LocalAIRerank,
@@ -193,6 +194,7 @@ CvModel = {
     "TogetherAI": TogetherAICV,
     "01.AI": YiCV,
     "Tencent Hunyuan": HunyuanCV,
+    "Azure-Document-Intelligence": AzureDocumentIntelligence,
 }
 
 ChatModel = {
